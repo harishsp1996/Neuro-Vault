@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HelperGPT - Internal Documentation AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header__content">
+                <div class="header__left">
+                    <h1 class="logo">
+                        <span class="logo__icon">🤖</span>
+                        HelperGPT
+                    </h1>
+                </div>
+                <div class="header__right">
+                    <button class="btn btn--outline btn--sm" id="adminLoginBtn">
+                        <span class="btn__icon">👤</span>
+                        Admin Login
+                    </button>
+                    <button class="btn btn--primary btn--sm hidden" id="logoutBtn">
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main" id="mainView">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero__content">
+                    <h2 class="hero__title">Ask Anything</h2>
+                    <p class="hero__subtitle">Get instant answers from your company's internal documentation</p>
+                    
+                    <!-- Search Interface -->
+                    <div class="search-box">
+                        <div class="search-box__input-group">
+                            <input 
+                                type="text" 
+                                class="form-control search-box__input" 
+                                placeholder="What would you like to know about?"
+                                id="questionInput"
+                                list="suggestions"
+                            >
+                            <button class="btn btn--primary search-box__submit" id="askBtn">
+                                <span class="btn__icon">🔍</span>
+                                Ask
+                            </button>
+                        </div>
+                        <datalist id="suggestions">
+                            <option value="How do I set up the development environment?">
+                            <option value="What are the company policies for remote work?">
+                            <option value="How do I access the API endpoints?">
+                            <option value="What are the brand color codes?">
+                            <option value="How do I submit expense reports?">
+                            <option value="What are the security protocols?">
+                            <option value="How do I onboard new team members?">
+                            <option value="What are the deployment procedures?">
+                        </datalist>
+                    </div>
+
+                    <!-- Quick Questions -->
+                    <div class="quick-questions">
+                        <p class="quick-questions__label">Popular questions:</p>
+                        <div class="quick-questions__list">
+                            <button class="quick-question-btn" data-question="How do I set up the development environment?">
+                                Development Setup
+                            </button>
+                            <button class="quick-question-btn" data-question="What are the company policies for remote work?">
+                                Remote Work Policy
+                            </button>
+                            <button class="quick-question-btn" data-question="How do I access the API endpoints?">
+                                API Access
+                            </button>
+                            <button class="quick-question-btn" data-question="What are the brand color codes?">
+                                Brand Guidelines
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Results Section -->
+            <section class="results hidden" id="resultsSection">
+                <div class="results__header">
+                    <h3 class="results__title">Results</h3>
+                    <button class="btn btn--outline btn--sm" id="clearResultsBtn">Clear</button>
+                </div>
+                <div class="results__content" id="resultsContent">
+                    <!-- Results will be populated by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Chat History Sidebar -->
+            <div class="chat-history hidden" id="chatHistory">
+                <div class="chat-history__header">
+                    <h4>Recent Questions</h4>
+                    <button class="btn btn--outline btn--sm" id="clearHistoryBtn">Clear History</button>
+                </div>
+                <div class="chat-history__list" id="chatHistoryList">
+                    <!-- History items will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel hidden" id="adminPanel">
+        <div class="container">
+            <div class="admin-panel__header">
+                <h2>Admin Dashboard</h2>
+                <div class="breadcrumb">
+                    <span>Admin</span>
+                    <span class="breadcrumb__separator">›</span>
+                    <span>Document Management</span>
+                </div>
+            </div>
+
+            <div class="admin-grid">
+                <!-- Upload Section -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Upload Documents</h3>
+                    </div>
+                    <div class="card__body">
+                        <form class="upload-form" id="uploadForm">
+                            <div class="form-group">
+                                <label class="form-label">Team</label>
+                                <select class="form-control" id="teamSelect" required>
+                                    <option value="">Select Team</option>
+                                    <option value="Engineering">Engineering</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="HR">HR</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Project</label>
+                                <select class="form-control" id="projectSelect" required>
+                                    <option value="">Select Project</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Files (.txt, .pdf, .doc, .docx)</label>
+                                <div class="file-upload-area" id="fileUploadArea">
+                                    <div class="file-upload-icon">📁</div>
+                                    <p class="file-upload-text">Drag & drop files here or click to browse</p>
+                                    <input type="file" class="file-upload-input" id="fileInput" multiple accept=".txt,.pdf,.doc,.docx">
+                                </div>
+                                <div class="file-list" id="fileList"></div>
+                            </div>
+                            <button type="submit" class="btn btn--primary btn--full-width">
+                                <span class="btn__icon">⬆️</span>
+                                Upload Documents
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Documents List -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Uploaded Documents</h3>
+                        <div class="document-stats">
+                            <span class="stat">
+                                <span class="stat__value" id="totalDocs">3</span>
+                                <span class="stat__label">Documents</span>
+                            </span>
+                            <span class="stat">
+                                <span class="stat__value" id="totalSize">7.4 MB</span>
+                                <span class="stat__label">Total Size</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="card__body">
+                        <div class="documents-list" id="documentsList">
+                            <!-- Documents will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Processing Status -->
+                <div class="card">
+                    <div class="card__header">
+                        <h3>AI Training Status</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="training-status">
+                            <div class="status-item">
+                                <div class="status-item__header">
+                                    <span>Document Processing</span>
+                                    <span class="status status--success">Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-bar__fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-item__header">
+                                    <span>Embeddings Generation</span>
+                                    <span class="status status--success">Complete</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-bar__fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-item__header">
+                                    <span>Index Building</span>
+                                    <span class="status status--info">Ready</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-bar__fill" style="width: 100%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div class="modal hidden" id="loginModal">
+        <div class="modal__overlay"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3>Admin Login</h3>
+                <button class="modal__close" id="closeLoginModal">&times;</button>
+            </div>
+            <form class="modal__body" id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" placeholder="Enter username" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full-width">Login</button>
+                <p class="login-hint">Demo credentials: admin / password123</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Upload Progress Modal -->
+    <div class="modal hidden" id="uploadProgressModal">
+        <div class="modal__overlay"></div>
+        <div class="modal__content">
+            <div class="modal__header">
+                <h3>Uploading Documents</h3>
+            </div>
+            <div class="modal__body">
+                <div class="upload-progress" id="uploadProgress">
+                    <!-- Progress items will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Processing Overlay (only shown when needed) -->
+    <div class="processing-overlay hidden" id="processingOverlay">
+        <div class="processing-spinner">
+            <div class="spinner"></div>
+            <p class="processing-text">Processing your request...</p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
